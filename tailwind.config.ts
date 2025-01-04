@@ -9,6 +9,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        rajdhani: ["Rajdhani", "sans-serif"], // Add Rajdhani as a custom font
+      },
       colors: {
         zink: {
           "50": "#f7f7f8",
