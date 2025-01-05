@@ -1,11 +1,14 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { FieldValues, SubmitHandler } from "react-hook-form";
 import HForm from "../Form/HForm";
 import HInput from "../Form/HInput";
 import { Button } from "../ui/button";
-import { loginUser } from "@/services/auth";
-import { useMutation } from "react-query";
-import { toast } from "sonner";
 import { Loader, MoveRight } from "lucide-react";
+import { useLogInMutation } from "@/redux/features/auth/auth.api";
+import { useAppDispatch } from "@/redux/hooks";
+import { useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
+import { login } from "@/redux/features/auth/auth.slice";
 
 const Login = ({
   setMode,
@@ -14,23 +17,20 @@ const Login = ({
   setMode: (key: "login" | "register") => void;
   setOpen: (key: boolean) => void;
 }) => {
-  const { mutate, isLoading } = useMutation({
-    mutationKey: ["register"],
-    mutationFn: (data: FormData) => loginUser(data),
-    onSuccess: (data) => {
-      console.log(data);
-      if (!data?.error) {
-        toast.success("Login Success.");
-        setOpen(false);
-      } else {
-        toast.error(data?.error?.message);
-      }
-    },
-  });
+  const dispatch = useAppDispatch();
+  const [loginUser, { isLoading, data, isSuccess }] = useLogInMutation();
   const handleSubmit: SubmitHandler<FieldValues> = (data) => {
     // Pass FormData to the mutate function
-    mutate(data as FormData);
+    loginUser(data as FormData);
   };
+
+  useEffect(() => {
+    if (isSuccess && !isLoading) {
+      const user = jwtDecode(data.data.token);
+      dispatch(login({ user, token: data.data.token }));
+      setOpen(false);
+    }
+  }, [isSuccess, isLoading, data, dispatch]);
   return (
     <div className="space-y-3">
       <div className="space-y-1.5">

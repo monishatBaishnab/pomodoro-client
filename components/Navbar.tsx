@@ -5,22 +5,24 @@ import { ChartArea, LogIn, LogOut, User } from "lucide-react";
 import { useState } from "react";
 import Statistics from "./Statistics/Statistics";
 import Auth from "./Auth/Auth";
-import { TUser } from "@/types";
-import { logoutUser } from "@/services/auth";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { logout } from "@/redux/features/auth/auth.slice";
 
-const Navbar = ({ user }: { user: TUser }) => {
+const Navbar = () => {
   const [openStatistics, setOpenStatistics] = useState(false);
   const [openAuthForm, setOpenAuthForm] = useState(false);
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((user) => user.auth.user);
   const handleLogout = async () => {
-    await logoutUser();
+    dispatch(logout());
   };
-
+  
   return (
     <div className="flex items-center justify-between">
       <div className="spy-2">
@@ -38,16 +40,16 @@ const Navbar = ({ user }: { user: TUser }) => {
               <ChartArea className="text-zinc-400 size-4" />
             </span>
           }
-          content={user? "Statistics":"Please login for see statistics."}
+          content={user ? "Statistics" : "Please login for see statistics."}
         />
 
         {user ? (
           <DropdownMenu>
             <DropdownMenuTrigger className="outline-none">
               <div className="size-9 rounded-full overflow-hidden flex items-center justify-center bg-zink-100">
-                {user?.profile ? (
+                {user?.profile_picture ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img className="size-full object-contain" src={user?.profile} alt={user?.email} />
+                  <img className="size-full object-contain" src={user?.profile_picture} alt={user?.email} />
                 ) : (
                   <User className="size-5 text-zink-500" />
                 )}
