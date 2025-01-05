@@ -5,10 +5,12 @@ import { ChartArea, LogIn } from "lucide-react";
 import { useState } from "react";
 import Statistics from "./Statistics/Statistics";
 import Auth from "./Auth/Auth";
+import { useUserInfo } from "@/providers/UserInfoProvider";
 
 const Navbar = () => {
   const [openStatistics, setOpenStatistics] = useState(false);
   const [openAuthForm, setOpenAuthForm] = useState(false);
+const user = useUserInfo();
 
   return (
     <div className="flex items-center justify-between">
@@ -19,27 +21,18 @@ const Navbar = () => {
       <div className="flex items-center gap-2">
         <PTooltip
           trigger={
-            <button onClick={() => setOpenStatistics(true)} className="bg-zink-100/80 p-2 rounded">
+            <span onClick={() => setOpenStatistics(true)} className="bg-zink-100/80 p-2 rounded block">
               <ChartArea className="text-zinc-400 size-4" />
-            </button>
+            </span>
           }
           content="Statistics"
         />
 
-        {/* <PTooltip
-          trigger={
-            <button onClick={() => setOpenSettings(true)} className="bg-zink-100/80 p-2 rounded">
-              <Settings className="text-zinc-400 size-4" />
-            </button>
-          }
-          content="Settings"
-        /> */}
-
         <PTooltip
           trigger={
-            <button onClick={() => setOpenAuthForm(true)} className="bg-zink-100/80 p-2 rounded">
+            <span onClick={() => setOpenAuthForm(true)} className="bg-zink-100/80 block p-2 rounded">
               <LogIn className="text-zinc-400 size-4" />
-            </button>
+            </span>
           }
           content="Login"
         />

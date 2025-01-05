@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { X } from "lucide-react";
 import Login from "./Login";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Register from "./Register";
 
 type TAuthProps = {
@@ -18,6 +18,10 @@ type TAuthProps = {
 
 const Auth = ({ open, setOpen, title }: TAuthProps) => {
   const [mode, setMode] = useState<"login" | "register">("login");
+
+  useEffect(() => {
+    setMode("login");
+  }, [open]);
   return (
     <Dialog open={open}>
       <DialogContent className="max-w-sm">
@@ -32,7 +36,11 @@ const Auth = ({ open, setOpen, title }: TAuthProps) => {
           </DialogTitle>
           <DialogDescription>
             <div className="space-y-10">
-              {mode === "login" ? <Login setMode={setMode} /> : <Register setMode={setMode} />}
+              {mode === "login" ? (
+                <Login setOpen={setOpen} setMode={setMode} />
+              ) : (
+                <Register setOpen={setOpen} setMode={setMode} />
+              )}
             </div>
           </DialogDescription>
         </DialogHeader>
