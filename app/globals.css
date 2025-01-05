@@ -105,3 +105,33 @@ body {
     @apply text-4xl sm:text-6xl font-extrabold leading-tight text-zink-950;
   }
 }
+
+
+
+/* Targeting the dashboard-sidebar */
+#modal-sidebar {
+  overflow-y: auto; /* Ensure scrolling is enabled */
+}
+
+/* Customizing the scrollbar */
+#modal-sidebar::-webkit-scrollbar {
+  width: 5px; /* Width of the scrollbar */
+  height: 5px; /* Height of the scrollbar */
+}
+
+/* Track */
+#modal-sidebar::-webkit-scrollbar-track {
+  background: #f0f0f0; /* Track color */
+  border-radius: 10px; /* Optional: Rounded edges */
+}
+
+/* Thumb */
+#modal-sidebar::-webkit-scrollbar-thumb {
+  background: #cfcfcf; /* Scrollbar color */
+  border-radius: 50px; 
+}
+
+/* Thumb on hover */
+#modal-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #bbbbbb; /* Hover color */
+}

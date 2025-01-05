@@ -1,4 +1,4 @@
-import Navbar from "./_components/Navbar";
+import Navbar from "../components/Navbar";
 import Pomodoro from "./_components/Pomodoro";
 
 export default function Home() {

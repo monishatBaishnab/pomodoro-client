@@ -3,7 +3,7 @@
 import { Brain, ChevronRight, Coffee, Pause, Play, TimerReset } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import ActionButton from "./ActionButton";
-import ProgressBar from "./Progress";
+import ProgressBar from "../../components/custom/Progress";
 
 type TMode = "focus" | "short_break";
 
