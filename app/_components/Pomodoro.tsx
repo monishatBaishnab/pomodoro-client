@@ -1,19 +1,33 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import { Brain, ChevronRight, Coffee, Pause, Play, TimerReset } from "lucide-react";
+import {
+  Activity,
+  Brain,
+  BriefcaseBusiness,
+  ChevronRight,
+  Coffee,
+  Flame,
+  Pause,
+  Play,
+  TimerReset,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import ActionButton from "./ActionButton";
 import ProgressBar from "../../components/custom/Progress";
 import { useCreateFocusSessionMutation } from "@/redux/features/focus/focus.api";
-import { useCreateStreakMutation } from "@/redux/features/streak/streak.api";
+import {
+  useCreateStreakMutation,
+  useFetchAllStreaksQuery,
+} from "@/redux/features/streak/streak.api";
 import { useAppSelector } from "@/redux/hooks";
+import { useFetchAllBadgesQuery } from "@/redux/features/badge/badge.api";
 
 type TMode = "focus" | "short_break";
 
 const Pomodoro = () => {
   const [mode, setMode] = useState<TMode>("focus");
-  const [focusDuration] = useState(5 * 60);
+  const [focusDuration] = useState(25 * 60);
   const [breakDuration] = useState(5 * 60);
   const [activeColor, setActiveColor] = useState("#06b6d4");
   const [time, setTime] = useState<number>(focusDuration);
@@ -22,10 +36,12 @@ const Pomodoro = () => {
   const timerRef = useRef<NodeJS.Timeout>();
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const [createFocusSession, { data: fsData }] = useCreateFocusSessionMutation();
-  const [createStreak, { data: stData }] = useCreateStreakMutation();
+  const { data: streaksData } = useFetchAllStreaksQuery([]);
+
+  const [createFocusSession] = useCreateFocusSessionMutation();
+  const [createStreak] = useCreateStreakMutation();
   const user = useAppSelector((data) => data.auth.user);
-  console.log(stData, fsData);
+  const { data: badges } = useFetchAllBadgesQuery([]);
 
   const handleReset = () => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -162,6 +178,64 @@ const Pomodoro = () => {
           >
             <ChevronRight className="size-5" />
           </button>
+        </div>
+      </div>
+
+      <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+        <div className="flex gap-2 justify-between p-4 border border-zinc-200 bg-white rounded-md">
+          <div>
+            <BriefcaseBusiness className="size-8 text-cyan-500" />
+          </div>
+          <div className="text-right">
+            <h3>{streaksData?.data?.total_sessions}</h3>
+            <p className="text-zinc-500">Total Session</p>
+          </div>
+        </div>
+        <div className="flex gap-2 justify-between p-4 border border-zinc-200 bg-white rounded-md">
+          <div>
+            <Activity className="size-8 text-purple-500" />
+          </div>
+          <div className="text-right">
+            <h3>{streaksData?.data?.streaks?.currentStreak}</h3>
+            <p className="text-zinc-500">Current Streak</p>
+          </div>
+        </div>
+        <div className="flex gap-2 justify-between p-4 border border-zinc-200 bg-white rounded-md">
+          <div>
+            <Flame className="size-8 text-green-500" />
+          </div>
+          <div className="text-right">
+            <h3>{streaksData?.data?.streaks?.longestStreak}</h3>
+            <p className="text-zinc-500">Longest Streak</p>
+          </div>
+        </div>
+      </div>
+      <div className="space-y-5">
+        <h4>Earned Badges</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {badges?.data?.map(
+            ({
+              badge,
+            }: {
+              badge: {
+                name: string;
+                description: string;
+                icon: string;
+              };
+            }) => {
+              return (
+                <div className="flex bg-white items-center justify-between border border-zinc-200 rounded-md p-5">
+                  <div>
+                    <h6 className="font-semibold">{badge?.name}</h6>
+                    <p className="text-zinc-500 text-sm">{badge?.description}</p>
+                  </div>
+                  <div className="size-16 overflow-hidden">
+                    <img className="size-full object-contain" src={badge?.icon} alt="" />
+                  </div>
+                </div>
+              );
+            }
+          )}
         </div>
       </div>
     </>
