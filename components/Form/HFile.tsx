@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 import { FolderOpenDot, Image, Trash2 } from 'lucide-react';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';

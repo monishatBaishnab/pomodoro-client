@@ -39,7 +39,7 @@ const Statistics = ({ open, setOpen, title }: TStatisticsProps) => {
             </div>
           </DialogTitle>
           <DialogDescription>
-            <div className="space-y-10">
+            <div className="space-y-5">
               <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
                 <div className="flex gap-2 justify-between p-4 border border-zinc-200 rounded-md">
                   <div>

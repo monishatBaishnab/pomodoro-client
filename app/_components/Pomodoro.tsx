@@ -9,8 +9,8 @@ type TMode = "focus" | "short_break";
 
 const Pomodoro = () => {
   const [mode, setMode] = useState<TMode>("focus");
-  const [focusDuration, setFocusDuration] = useState(25);
-  const [breakDuration, setBreakDuration] = useState(10);
+  const [focusDuration] = useState(25);
+  const [breakDuration] = useState(10);
   const [activeColor, setActiveColor] = useState("#06b6d4");
   const [time, setTime] = useState<number>(focusDuration);
   const [isActive, setIsActive] = useState(false);

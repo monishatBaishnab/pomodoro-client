@@ -13,13 +13,17 @@ import {
 const FocusChart = ({
   statistics,
 }: {
-  statistics: { date: string; total_price: string; total_orders: string }[];
+  statistics: {
+    date: string;
+    total_price: string;
+    order_count: string;
+  }[];
 }) => {
   const chartMargins = { top: 10, right: 0, left: 0, bottom: 10 };
   const axisStyles = { fontSize: 12, fill: "#555", fontWeight: "bold" };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <h2 className="text-xl font-semibold text-h-black">Sessions Analysis</h2>
       <div style={{ width: "100%", height: "400px" }}>
         <ResponsiveContainer width="100%" height="100%">
@@ -33,7 +37,9 @@ const FocusChart = ({
             <Legend
               content={
                 <div className="flex items-center justify-center space-x-2">
-                  <span className="font-semibold text-blue-600">Total Focus Time and Session Counts by Date</span>
+                  <span className="font-semibold text-blue-600">
+                    Total Focus Time and Session Counts by Date
+                  </span>
                 </div>
               }
               align="left"
