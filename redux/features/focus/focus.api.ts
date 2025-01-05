@@ -11,7 +11,17 @@ const focusApi = baseApi.injectEndpoints({
       },
       providesTags: ["metrics"],
     }),
+    createFocusSession: builder.mutation({
+      query: (data) => {
+        return {
+          url: "/focus-session",
+          method: "POST",
+          body: data,
+        };
+      },
+      invalidatesTags: ['metrics', 'streaks']
+    }),
   }),
 });
 
-export const { useFetchAllMetricsQuery } = focusApi;
+export const { useFetchAllMetricsQuery, useCreateFocusSessionMutation } = focusApi;

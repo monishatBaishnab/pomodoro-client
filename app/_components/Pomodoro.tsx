@@ -1,22 +1,31 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { Brain, ChevronRight, Coffee, Pause, Play, TimerReset } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import ActionButton from "./ActionButton";
 import ProgressBar from "../../components/custom/Progress";
+import { useCreateFocusSessionMutation } from "@/redux/features/focus/focus.api";
+import { useCreateStreakMutation } from "@/redux/features/streak/streak.api";
+import { useAppSelector } from "@/redux/hooks";
 
 type TMode = "focus" | "short_break";
 
 const Pomodoro = () => {
   const [mode, setMode] = useState<TMode>("focus");
-  const [focusDuration] = useState(25);
-  const [breakDuration] = useState(10);
+  const [focusDuration] = useState(5 * 60);
+  const [breakDuration] = useState(5 * 60);
   const [activeColor, setActiveColor] = useState("#06b6d4");
   const [time, setTime] = useState<number>(focusDuration);
   const [isActive, setIsActive] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const timerRef = useRef<NodeJS.Timeout>();
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const [createFocusSession, { data: fsData }] = useCreateFocusSessionMutation();
+  const [createStreak, { data: stData }] = useCreateStreakMutation();
+  const user = useAppSelector((data) => data.auth.user);
+  console.log(stData, fsData);
 
   const handleReset = () => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -59,11 +68,19 @@ const Pomodoro = () => {
       setActiveColor("#84cc16");
       setTime(breakDuration);
     }
-    if (time === 0) {
-      setIsActive(true);
-      setIsPaused(false);
-    }
   }, [mode]);
+
+  useEffect(() => {
+    if (time === 0 && user?.id && mode === "focus") {
+      console.log("creating");
+      console.log("Creating all");
+      createFocusSession({
+        duration: focusDuration / 60,
+        userId: user?.id,
+      });
+      createStreak({});
+    }
+  }, [time === 0]);
 
   useEffect(() => {
     if (isActive && !isPaused) {
@@ -75,7 +92,8 @@ const Pomodoro = () => {
           if (prev === 0) {
             clearInterval(timerRef.current);
             setMode(() => (mode === "focus" ? "short_break" : "focus"));
-
+            setIsActive(false);
+            setIsPaused(true);
             return 0;
           } else {
             return prev - 1;

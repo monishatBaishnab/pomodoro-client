@@ -78,7 +78,7 @@ const Statistics = ({ open, setOpen, title }: TStatisticsProps) => {
                     <Calendar className="size-8 text-lime-500" />
                   </div>
                   <div className="text-right">
-                    <h3>5</h3>
+                    <h3>{statistics?.length}</h3>
                     <p className="text-zinc-500">Days Focused</p>
                   </div>
                 </div>
@@ -96,7 +96,7 @@ const Statistics = ({ open, setOpen, title }: TStatisticsProps) => {
                     <Flame className="size-8 text-green-500" />
                   </div>
                   <div className="text-right">
-                    <h3>{streaksData?.data?.streaks?.currentStreak}</h3>
+                    <h3>{streaksData?.data?.streaks?.longestStreak}</h3>
                     <p className="text-zinc-500">Longest Streak</p>
                   </div>
                 </div>

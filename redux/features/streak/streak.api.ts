@@ -11,7 +11,17 @@ const streaksApi = baseApi.injectEndpoints({
       },
       providesTags: ["streaks"],
     }),
+    createStreak: builder.mutation({
+      query: (data) => {
+        return {
+          url: "/streaks",
+          method: "POST",
+          body: data,
+        };
+      },
+      invalidatesTags: ['streaks']
+    }),
   }),
 });
 
-export const { useFetchAllStreaksQuery } = streaksApi;
+export const { useFetchAllStreaksQuery, useCreateStreakMutation } = streaksApi;
