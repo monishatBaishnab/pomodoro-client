@@ -14,9 +14,8 @@ const FocusChart = ({
   statistics,
 }: {
   statistics: {
-    date: string;
-    total_price: string;
-    order_count: string;
+    day: string;
+    totalDuration: string;
   }[];
 }) => {
   const chartMargins = { top: 10, right: 0, left: 0, bottom: 10 };
@@ -47,7 +46,7 @@ const FocusChart = ({
               height={36}
             />
             <XAxis
-              dataKey="date"
+              dataKey="day"
               tick={(props) => {
                 const { x, y, payload } = props;
                 return (
@@ -73,7 +72,7 @@ const FocusChart = ({
             {/* Interactive elements */}
             <Tooltip cursor={{ stroke: "#8884d8", strokeWidth: 0.5 }} />
             {/* <Legend verticalAlign="top" height={36} /> */}
-            <Bar dataKey="order_count" barSize={10} radius={[5, 5, 0, 0]} fill="#413ea0" />
+            <Bar dataKey="totalDuration" barSize={10} radius={[5, 5, 0, 0]} fill="#413ea0" />
           </ComposedChart>
         </ResponsiveContainer>
       </div>

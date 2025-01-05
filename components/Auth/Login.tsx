@@ -39,7 +39,13 @@ const Login = ({
           Please login using account detail bellow.
         </p>
       </div>
-      <HForm onSubmit={handleSubmit}>
+      <HForm
+        defaultValues={{
+          email: "baishnabmonishat@gmail.com",
+          password: 123,
+        }}
+        onSubmit={handleSubmit}
+      >
         <div className="space-y-4">
           <HInput placeholder="Email Address" name="email" />
           <HInput placeholder="Password" name="password" />

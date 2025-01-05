@@ -5,8 +5,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Activity, Calendar, Clock, Flame, X } from "lucide-react";
+import { Activity, BriefcaseBusiness, Calendar, Flame, X } from "lucide-react";
 import FocusChart from "./FocusChart";
+import { useFetchAllStreaksQuery } from "@/redux/features/streak/streak.api";
 
 type TStatisticsProps = {
   open: boolean;
@@ -14,18 +15,40 @@ type TStatisticsProps = {
   title: string;
 };
 
-const statistics = [
-  { date: '2024-12-01', total_price: "2400", order_count: "3" },
-  { date: '2024-12-02', total_price: "1300", order_count: "12" },
-  { date: '2024-12-03', total_price: "9800", order_count: "9" },
-  { date: '2024-12-04', total_price: "3900", order_count: "7" },
-  { date: '2024-12-05', total_price: "4800", order_count: "3" },
-  { date: '2024-12-06', total_price: "3800", order_count: "4" },
-  { date: '2024-12-07', total_price: "4300", order_count: "13" },
-];
+type DataItem = {
+  id: string;
+  timestamps: string;
+  duration: number;
+  isDeleted: boolean;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
+type GroupedByDay = {
+  [day: string]: number;
+};
 
 const Statistics = ({ open, setOpen, title }: TStatisticsProps) => {
+  const { data: streaksData } = useFetchAllStreaksQuery([]);
+
+  const groupedByDay = streaksData?.data?.sessions?.reduce((acc: GroupedByDay, item: DataItem) => {
+    const date = new Date(item.timestamps).toISOString().split("T")[0]; // Extract date
+    if (!acc[date]) {
+      acc[date] = 0;
+    }
+    acc[date] += item.duration; // Add duration
+    return acc;
+  }, {});
+
+  const statistics: {
+    day: string;
+    totalDuration: string;
+  }[] = Object.entries(groupedByDay || {}).map(([day, totalDuration]) => ({
+    day,
+    totalDuration: totalDuration as string,
+  }));
+
   return (
     <Dialog open={open}>
       <DialogContent className="max-w-screen-md">
@@ -43,11 +66,11 @@ const Statistics = ({ open, setOpen, title }: TStatisticsProps) => {
               <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
                 <div className="flex gap-2 justify-between p-4 border border-zinc-200 rounded-md">
                   <div>
-                    <Clock className="size-8 text-cyan-500" />
+                    <BriefcaseBusiness className="size-8 text-cyan-500" />
                   </div>
                   <div className="text-right">
-                    <h3>5</h3>
-                    <p className="text-zinc-500">Hours Focused</p>
+                    <h3>{streaksData?.data?.total_sessions}</h3>
+                    <p className="text-zinc-500">Total Session</p>
                   </div>
                 </div>
                 <div className="flex gap-2 justify-between p-4 border border-zinc-200 rounded-md">
@@ -64,7 +87,7 @@ const Statistics = ({ open, setOpen, title }: TStatisticsProps) => {
                     <Activity className="size-8 text-purple-500" />
                   </div>
                   <div className="text-right">
-                    <h3>5</h3>
+                    <h3>{streaksData?.data?.streaks?.currentStreak}</h3>
                     <p className="text-zinc-500">Current Streak</p>
                   </div>
                 </div>
@@ -73,7 +96,7 @@ const Statistics = ({ open, setOpen, title }: TStatisticsProps) => {
                     <Flame className="size-8 text-green-500" />
                   </div>
                   <div className="text-right">
-                    <h3>5</h3>
+                    <h3>{streaksData?.data?.streaks?.currentStreak}</h3>
                     <p className="text-zinc-500">Longest Streak</p>
                   </div>
                 </div>
