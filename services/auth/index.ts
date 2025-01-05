@@ -58,18 +58,17 @@ export const logoutUser = () => {
 };
 
 export const getCurrentUser = async () => {
-  const userToken = cookies().get("token")?.value;
+  const userToken = await cookies().get("token")?.value;
 
   let decodedData = null;
 
   if (userToken) {
     decodedData = await jwtDecode(userToken as string);
-    console.log(decodedData);
+
     return {
-      _id: decodedData?._id,
-      role: decodedData?.role,
+      id: decodedData?.id,
       email: decodedData?.email,
-      isVerified: decodedData?.isVerified,
+      profile: decodedData?.profile_picture,
     };
   }
   

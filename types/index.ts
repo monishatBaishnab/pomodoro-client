@@ -1,6 +1,5 @@
-export type TUserInfo = {
-  _id: string;
-  role: string;
+export type TUser = {
+  id: string;
   email: string;
-  isVerified: boolean;
+  profile: string | undefined;
 };
