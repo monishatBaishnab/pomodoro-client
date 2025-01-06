@@ -41,7 +41,7 @@ const Login = ({
       </div>
       <HForm
         defaultValues={{
-          email: "baishnabmonishat@gmail.com",
+          email: "baisnabmonishat@gmail.com",
           password: 123,
         }}
         onSubmit={handleSubmit}

@@ -36,13 +36,13 @@ const Pomodoro = () => {
   const timerRef = useRef<NodeJS.Timeout>();
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const { data: streaksData } = useFetchAllStreaksQuery([]);
-
+  const user = useAppSelector((data) => data.auth.user);
   const [createFocusSession] = useCreateFocusSessionMutation();
   const [createStreak] = useCreateStreakMutation();
-  const user = useAppSelector((data) => data.auth.user);
-  const { data: badges } = useFetchAllBadgesQuery([]);
-
+  const { data: badges} = useFetchAllBadgesQuery([], { skip: !user?.id });
+  const { data: streaksData, isLoading: sLoading } = useFetchAllStreaksQuery([], {
+    skip: !user?.id,
+  });
   const handleReset = () => {
     if (timerRef.current) clearInterval(timerRef.current);
     setIsActive(false);
@@ -88,10 +88,8 @@ const Pomodoro = () => {
 
   useEffect(() => {
     if (time === 0 && user?.id && mode === "focus") {
-      console.log("creating");
-      console.log("Creating all");
       createFocusSession({
-        duration: focusDuration / 60,
+        duration: focusDuration,
         userId: user?.id,
       });
       createStreak({});
@@ -181,63 +179,89 @@ const Pomodoro = () => {
         </div>
       </div>
 
-      <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-        <div className="flex gap-2 justify-between p-4 border border-zinc-200 bg-white rounded-md">
-          <div>
-            <BriefcaseBusiness className="size-8 text-cyan-500" />
-          </div>
-          <div className="text-right">
-            <h3>{streaksData?.data?.total_sessions}</h3>
-            <p className="text-zinc-500">Total Session</p>
-          </div>
-        </div>
-        <div className="flex gap-2 justify-between p-4 border border-zinc-200 bg-white rounded-md">
-          <div>
-            <Activity className="size-8 text-purple-500" />
-          </div>
-          <div className="text-right">
-            <h3>{streaksData?.data?.streaks?.currentStreak}</h3>
-            <p className="text-zinc-500">Current Streak</p>
-          </div>
-        </div>
-        <div className="flex gap-2 justify-between p-4 border border-zinc-200 bg-white rounded-md">
-          <div>
-            <Flame className="size-8 text-green-500" />
-          </div>
-          <div className="text-right">
-            <h3>{streaksData?.data?.streaks?.longestStreak}</h3>
-            <p className="text-zinc-500">Longest Streak</p>
-          </div>
-        </div>
-      </div>
-      <div className="space-y-5">
-        <h4>Earned Badges</h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {badges?.data?.map(
-            ({
-              badge,
-            }: {
-              badge: {
-                name: string;
-                description: string;
-                icon: string;
-              };
-            }) => {
-              return (
-                <div className="flex bg-white items-center justify-between border border-zinc-200 rounded-md p-5">
-                  <div>
-                    <h6 className="font-semibold">{badge?.name}</h6>
-                    <p className="text-zinc-500 text-sm">{badge?.description}</p>
-                  </div>
-                  <div className="size-16 overflow-hidden">
-                    <img className="size-full object-contain" src={badge?.icon} alt="" />
-                  </div>
+      {user?.id ? (
+        sLoading ? (
+          <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+            {Array.from({ length: 3 }).map((_, ind) => (
+              <div
+                key={ind}
+                className="flex gap-2 justify-between p-4 border border-zinc-200 bg-white rounded-md animate-pulse"
+              >
+                <div className="h-8 w-8 bg-cyan-200 rounded-full"></div>
+                <div className="flex flex-col items-end">
+                  <div className="h-6 w-16 bg-zinc-200 rounded mb-2"></div>
+                  <div className="h-4 w-20 bg-zinc-200 rounded"></div>
                 </div>
-              );
-            }
-          )}
-        </div>
-      </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <>
+            <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+              <div className="flex gap-2 justify-between p-4 border border-zinc-200 bg-white rounded-md">
+                <div>
+                  <BriefcaseBusiness className="size-8 text-cyan-500" />
+                </div>
+                <div className="text-right">
+                  <h3>{streaksData?.data?.total_sessions || 0}</h3>
+                  <p className="text-zinc-500">Total Session</p>
+                </div>
+              </div>
+              <div className="flex gap-2 justify-between p-4 border border-zinc-200 bg-white rounded-md">
+                <div>
+                  <Activity className="size-8 text-purple-500" />
+                </div>
+                <div className="text-right">
+                  <h3>{streaksData?.data?.streaks?.[0]?.currentStreak || 0}</h3>
+                  <p className="text-zinc-500">Current Streak</p>
+                </div>
+              </div>
+              <div className="flex gap-2 justify-between p-4 border border-zinc-200 bg-white rounded-md">
+                <div>
+                  <Flame className="size-8 text-green-500" />
+                </div>
+                <div className="text-right">
+                  <h3>{streaksData?.data?.streaks?.[0]?.longestStreak || 0}</h3>
+                  <p className="text-zinc-500">Longest Streak</p>
+                </div>
+              </div>
+            </div>
+            {badges?.data?.length ? (
+              <div className="space-y-5">
+                <h4>Earned Badges</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {badges?.data?.map(
+                    ({
+                      badge,
+                    }: {
+                      badge: {
+                        name: string;
+                        description: string;
+                        icon: string;
+                      };
+                    }) => {
+                      return (
+                        <div
+                          key={badge?.name}
+                          className="flex bg-white items-center justify-between border border-zinc-200 rounded-md p-5"
+                        >
+                          <div>
+                            <h6 className="font-semibold">{badge?.name}</h6>
+                            <p className="text-zinc-500 text-sm">{badge?.description}</p>
+                          </div>
+                          <div className="size-16 overflow-hidden">
+                            <img className="size-full object-contain" src={badge?.icon} alt="" />
+                          </div>
+                        </div>
+                      );
+                    }
+                  )}
+                </div>
+              </div>
+            ) : null}
+          </>
+        )
+      ) : null}
     </>
   );
 };

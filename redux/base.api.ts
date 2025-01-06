@@ -5,7 +5,7 @@ import { RootState } from './store';
 export const tagTypes = ['focus', 'metrics', 'users', 'streaks'];
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: 'http://localhost:8000/api/v1',
+  baseUrl: 'https://pomodoro-app-server.vercel.app/api/v1',
   credentials: 'include',
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;

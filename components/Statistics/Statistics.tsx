@@ -8,6 +8,7 @@ import {
 import { Activity, BriefcaseBusiness, Calendar, Flame, X } from "lucide-react";
 import FocusChart from "./FocusChart";
 import { useFetchAllStreaksQuery } from "@/redux/features/streak/streak.api";
+import { useAppSelector } from "@/redux/hooks";
 
 type TStatisticsProps = {
   open: boolean;
@@ -30,7 +31,8 @@ type GroupedByDay = {
 };
 
 const Statistics = ({ open, setOpen, title }: TStatisticsProps) => {
-  const { data: streaksData } = useFetchAllStreaksQuery([]);
+  const token = useAppSelector((state) => state.auth.token);
+  const { data: streaksData } = useFetchAllStreaksQuery([], {skip: !token});
 
   const groupedByDay = streaksData?.data?.sessions?.reduce((acc: GroupedByDay, item: DataItem) => {
     const date = new Date(item.timestamps).toISOString().split("T")[0]; // Extract date
@@ -48,7 +50,10 @@ const Statistics = ({ open, setOpen, title }: TStatisticsProps) => {
     day,
     totalDuration: totalDuration as string,
   }));
-
+  const time = Number(streaksData?.data?.total_duration)||0;
+  const formattedTime = `${String(Math.floor(time / 60)).padStart(2, "0")}:${String(
+    time % 60
+  ).padStart(2, "0")}`;
   return (
     <Dialog open={open}>
       <DialogContent className="max-w-screen-md">
@@ -78,8 +83,8 @@ const Statistics = ({ open, setOpen, title }: TStatisticsProps) => {
                     <Calendar className="size-8 text-lime-500" />
                   </div>
                   <div className="text-right">
-                    <h3>{statistics?.length}</h3>
-                    <p className="text-zinc-500">Days Focused</p>
+                    <h3>{formattedTime}</h3>
+                    <p className="text-zinc-500">Hours Focused</p>
                   </div>
                 </div>
                 <div className="flex gap-2 justify-between p-4 border border-zinc-200 rounded-md">
@@ -87,7 +92,7 @@ const Statistics = ({ open, setOpen, title }: TStatisticsProps) => {
                     <Activity className="size-8 text-purple-500" />
                   </div>
                   <div className="text-right">
-                    <h3>{streaksData?.data?.streaks?.currentStreak}</h3>
+                    <h3>{streaksData?.data?.streaks?.[0]?.currentStreak}</h3>
                     <p className="text-zinc-500">Current Streak</p>
                   </div>
                 </div>
@@ -96,7 +101,7 @@ const Statistics = ({ open, setOpen, title }: TStatisticsProps) => {
                     <Flame className="size-8 text-green-500" />
                   </div>
                   <div className="text-right">
-                    <h3>{streaksData?.data?.streaks?.longestStreak}</h3>
+                    <h3>{streaksData?.data?.streaks?.[0]?.longestStreak}</h3>
                     <p className="text-zinc-500">Longest Streak</p>
                   </div>
                 </div>
