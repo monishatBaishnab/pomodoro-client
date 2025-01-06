@@ -1,5 +1,5 @@
 # Pomodoro Time Management and Focus Tracker
-
+[Live](https://pomodoro-app-client.vercel.app/)
 ### Overview
 
 The **Pomodoro Time Management and Focus Tracker** is a web application designed to help students manage their study time effectively using the Pomodoro Technique. This technique consists of focused study intervals of 25 minutes, followed by short 5-minute breaks. The application features a timer, detailed analytics of study sessions, and a gamified system to reward consistent study habits.
